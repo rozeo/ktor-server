@@ -1,4 +1,4 @@
-package net.roz.http
+package net.roz.core.http
 
 import java.io.OutputStream
 

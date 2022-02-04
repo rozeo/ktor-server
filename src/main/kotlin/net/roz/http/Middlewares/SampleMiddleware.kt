@@ -1,9 +1,7 @@
 package net.roz.http.Middlewares
 
-import io.ktor.http.content.*
-import net.roz.http.MiddlewareInterface
-import net.roz.http.ResponseInterface
-import java.io.OutputStream
+import net.roz.core.http.MiddlewareInterface
+import net.roz.core.http.ResponseInterface
 import java.util.Optional
 
 class SampleMiddleware: MiddlewareInterface {

@@ -1,4 +1,4 @@
-package net.roz.di
+package net.roz.core.di
 
 interface InstanceResolverInterface {
     fun resolve(): Any

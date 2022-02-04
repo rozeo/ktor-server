@@ -1,3 +1,3 @@
-package net.roz.di
+package net.roz.core.di
 
 data class BindSetting(val target: Any, val singleton: Boolean = false)
