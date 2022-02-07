@@ -25,20 +25,6 @@ class Application(private val ktorApplication: KtorApplication) {
         routingDefinitions(routing)
         return this
     }
-
-    fun routeHandling(routing: KtorRouting, definition: RouteDefinition<*, *>) {
-        routing.apply {
-
-            // instantiate classes
-            val handler = container.get(definition.handler)
-            val middlewares = definition.middlewares.map { container.get(it) }
-
-            route(definition.uri, definition.method) {
-                handle {
-                }
-            }
-        }
-    }
 }
 
 

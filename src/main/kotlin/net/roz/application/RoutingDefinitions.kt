@@ -7,12 +7,14 @@ import net.roz.application.http.middlewares.SampleMiddleware
 import net.roz.core.application.Routing
 
 fun routingDefinitions(routing: Routing) {
-    routing.withMiddlewares(listOf(SampleMiddleware::class)) {
-        add(HttpMethod.Get, "/", HelloWorldHandler::class)
-        routing.withPrefix("/hoge") {
+    routing.apply {
+        withMiddlewares(listOf(SampleMiddleware::class)) {
             add(HttpMethod.Get, "/", HelloWorldHandler::class)
+            withPrefix("/hoge") {
+                add(HttpMethod.Get, "/", HelloWorldHandler::class)
+            }
         }
-    }
 
-    routing.add(HttpMethod.Post, "/", PostHandler::class)
+        add(HttpMethod.Post, "/", PostHandler::class)
+    }
 }
