@@ -3,6 +3,7 @@ package net.roz.core.di
 import kotlin.reflect.KClass
 
 
+@Suppress("UNCHECKED_CAST")
 class Container {
     companion object {
         private val bindDict = mutableMapOf<String, BindSetting>()
@@ -14,6 +15,10 @@ class Container {
     }
 
     fun <T: Any> bind(clazz: KClass<T>, to: BindSetting): Container {
+        clazz.apply {
+
+        }
+
         bindDict[clazz.qualifiedName!!] = to
         return this
     }
@@ -34,6 +39,7 @@ class Container {
 
         if (bindDict[clazz.name] != null) {
             val setting: BindSetting = bindDict[clazz.name]!!
+
             val instance = resolveBindTarget(setting.target) as T
 
             if (setting.singleton) {

@@ -1,7 +1,13 @@
 package net.roz.core.http
 
-import java.io.OutputStream
+import io.ktor.http.*
+import java.io.InputStream
 
 interface ResponseInterface {
-    fun getBody(): OutputStream
+    val contentType: ContentType
+    val contentLength: Long
+    val status: HttpStatusCode
+    val headers: Headers
+
+    val body: InputStream
 }

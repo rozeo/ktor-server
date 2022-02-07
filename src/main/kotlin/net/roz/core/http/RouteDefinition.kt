@@ -3,18 +3,18 @@ package net.roz.core.http
 import io.ktor.http.*
 import kotlin.reflect.KClass
 
-data class  RouteDefinition<F: RequestHandlerInterface, S: MiddlewareInterface>(
+data class RouteDefinition<F: RequestHandlerInterface, S: MiddlewareInterface>(
     val method: HttpMethod,
     val uri: String,
     val handler: KClass<F>,
-    val middlewares: List<KClass<S>>,
+    val middlewares: List<KClass<S>> = listOf(),
 ) {
     companion object {
         fun <F: RequestHandlerInterface, S: MiddlewareInterface> prefix(
             prefix: String,
             internal: () -> Array<RouteDefinition<F, S>>
         ): Array<RouteDefinition<F, S>> {
-            return RouteDefinition.group(prefix, listOf(), internal);
+            return group(prefix, listOf(), internal)
         }
 
         fun <F: RequestHandlerInterface, S: MiddlewareInterface> group(
