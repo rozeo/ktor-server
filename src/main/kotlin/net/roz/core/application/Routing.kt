@@ -22,25 +22,33 @@ class Routing(private val ktorRouting: KtorRouting) {
         val responseConvertor = container.get(KtorResponseConvertor::class)
     }
 
-    private var middlewares: List<KClass<*>> = listOf()
+    private var middlewares: MutableList<MiddlewareInterface> = mutableListOf()
     private var prefix: String = ""
 
-    fun <T: MiddlewareInterface> withMiddlewares(addMiddlewares: List<KClass<T>>, stackCall: Routing.() -> Unit) {
-        val _middlewares = middlewares
-        middlewares = middlewares + addMiddlewares
+    fun withMiddlewares(addMiddlewares: List<KClass<*>>, stackCall: Routing.() -> Unit) {
+        val middlewareCache = middlewares
+
+        addMiddlewares.forEach {
+            val middleware = container.get(it)
+
+            // filter interface
+            if (middleware is MiddlewareInterface) {
+                middlewares.add(middleware)
+            }
+        }
 
         stackCall.invoke(this)
 
-        middlewares = _middlewares
+        middlewares = middlewareCache
     }
 
     fun withPrefix(addPrefix: String, stackCall: Routing.() -> Unit) {
-        val _prefix = prefix
-        prefix = prefix + addPrefix
+        val prefixCache = prefix
+        prefix += addPrefix
 
         stackCall.invoke(this)
 
-        prefix = _prefix
+        prefix = prefixCache
     }
 
     fun <T: RequestHandlerInterface> add(
@@ -52,15 +60,7 @@ class Routing(private val ktorRouting: KtorRouting) {
 
         // instantiate classes
         val handlerImplements = container.get(handler)
-        var middlewareImplements: List<MiddlewareInterface> = listOf()
-
-        middlewares
-            .forEach {
-                val middleware = container.get(it)
-                if (middleware is MiddlewareInterface) {
-                    middlewareImplements = middlewareImplements + middleware
-                }
-            }
+        val middlewareImplements = middlewares
 
         ktorRouting.apply {
             route(fullUri, httpMethod) {
@@ -70,8 +70,8 @@ class Routing(private val ktorRouting: KtorRouting) {
 
                     middlewareImplements.forEach {
                         val result = it.handle(request)
-                        if (result.isPresent) {
-                            response = Optional.of(result.get())
+                        if (result != null) {
+                            response = Optional.of(result)
                             return@forEach
                         }
                     }
